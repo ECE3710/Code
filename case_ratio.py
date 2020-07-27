@@ -6,87 +6,89 @@ accurate comparison of cases of COVID-19 across the US
 Garrett Matthews
 
 """
-# Importing libraries
+# Turning this script into a function to allow for easier call from separate scripts
 
-import csv
-import pandas as pd
 
-# Reading case data by county from NYTimes Github using pandas
+def case_rat():
+    """Function to run this whole script"""
 
-url = "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv"
+    # Importing libraries
 
-df = pd.read_csv(url, error_bad_lines=False)
+    import csv
+    import pandas as pd
 
-# Converted to a list because the functionality I had built prior to using pandas revolved around lists
+    # Reading case data by county from NYTimes Github using pandas
 
-case = df.values.tolist()
+    url = "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv"
 
-# Opening the population data - see github for source location and how it was edited
+    df = pd.read_csv(url, error_bad_lines=False)
 
-population = open('../Data/us_pop_statexcounty.csv', 'r')
+    # Converted to a list because the functionality I had built prior to using pandas revolved around lists
 
-# Dictionary to contain FIPS ID and the Population estimate
-pop_dict = {}
+    case = df.values.tolist()
 
-population = population.readlines()[1:]
-pop = []
+    # Opening the population data - see github for source location and how it was edited
 
-# Making the population CSV into a list, dropping the first line (headers), and removing the \n character
+    population = open('../Data/us_pop_statexcounty.csv', 'r')
 
-for line in population:
-    pop_temp = []
-    for i in line.split(','):
-        pop_temp.append(i)
-    pop.append(pop_temp)
+    # Dictionary to contain FIPS ID and the Population estimate
+    pop_dict = {}
 
-# print(pop)
-for i in range(len(pop)):
-    pop[i] = [x.replace('\n', '') for x in pop[i]]
+    population = population.readlines()[1:]
+    pop = []
 
-# print(pop)
+    # Making the population CSV into a list, dropping the first line (headers), and removing the \n character
 
-for i in pop:
-    pop_dict[float(i[0])] = int(i[-1])
+    for line in population:
+        pop_temp = []
+        for i in line.split(','):
+            pop_temp.append(i)
+        pop.append(pop_temp)
 
-# print(pop_dict)
+    # print(pop)
+    for i in range(len(pop)):
+        pop[i] = [x.replace('\n', '') for x in pop[i]]
 
-# Following the above steps to make the case counts into a list
-# This was for an earlier version when I was reading the data from my desktop
-# Rather than using pandas to take it directly from the github source
-"""
-case = []
+    # print(pop)
 
-for line in case_data:
-    case_temp = []
-    for i in line.split(','):
-        case_temp.append(i)
-    case.append(case_temp)
+    for i in pop:
+        pop_dict[float(i[0])] = int(i[-1])
 
-# print(case)
-for i in range(len(case)):
-    case[i] = [x.replace('\n', '') for x in case[i]]
-"""
-# print(case[0:5])
+    # print(pop_dict)
 
-# Making a dictionary of FIPS : {County : State}
+    # Following the above steps to make the case counts into a list
+    # This was for an earlier version when I was reading the data from my desktop
+    # Rather than using pandas to take it directly from the github source
+    """
+    case = []
 
-fips_dict = {}
+    for line in case_data:
+        case_temp = []
+        for i in line.split(','):
+            case_temp.append(i)
+        case.append(case_temp)
 
-for i in pop:
-    county_state = {i[2]: i[1]}
-    fips_dict[i[0]] = county_state
+    # print(case)
+    for i in range(len(case)):
+        case[i] = [x.replace('\n', '') for x in case[i]]
+    """
+    # print(case[0:5])
 
-# print(fips_dict)
+    # Making a dictionary of FIPS : {County : State}
 
-# Adding a cases per 10,000 population / county
+    fips_dict = {}
 
-case_copy = case.copy()
+    for i in pop:
+        county_state = {i[2]: i[1]}
+        fips_dict[i[0]] = county_state
 
-for i in range(len(case)):
-    if i == 0:
-        case[i].append("Case/10,000 People")
-        case[i].append("Death/10,000 People")
-    else:
+    # print(fips_dict)
+
+    # Adding a cases per 10,000 population / county
+
+    case_copy = case.copy()
+
+    for i in range(len(case)):
         fips = case[i][3]
         if pd.isnull(fips):
             # This is to prevent errors from missing FIPS values in the source data
@@ -100,11 +102,17 @@ for i in range(len(case)):
             case[i].append(case_ratio)
             case[i].append(death_ratio)
 
-# Writing the edited Case Counts data to a new CSV file
+    # Writing the edited Case Counts data to a new CSV file
 
-file = open('../Data/case_count_ratio.csv', 'w+', newline='')
-with file:
-    write = csv.writer(file)
-    write.writerows(case)
+    file = open('../Data/case_count_ratio.csv', 'w+', newline='')
+    with file:
+        write = csv.writer(file)
+        write.writerows(case)
 
 
+def main():
+    case_rat()
+
+
+if __name__ == "__main__":
+    main()
