@@ -13,8 +13,8 @@ cases = df["Case/10,000"]
 
 states = df["state"]
 
-print(ggplot(df, aes(x = dates, y = cases, color = states)) + geom_point())
+deaths = df["Death/10,000"]
 
+# print(ggplot(df, aes(x = dates, y = cases, color = states)) + geom_point())
 
-
-
+print(ggplot(df, aes(x = dates, y = deaths, color = states)) + geom_point())
