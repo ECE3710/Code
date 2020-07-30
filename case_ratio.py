@@ -19,13 +19,17 @@ def case_rat():
 
     # Reading case data by county from NYTimes Github using pandas
 
-    url = "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv"
+    url = "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv"
 
     df = pd.read_csv(url, error_bad_lines=False)
+
+    # Getting the column names as a list
+    col_name = df.columns.tolist()
 
     # Converted to a list because the functionality I had built prior to using pandas revolved around lists
 
     case = df.values.tolist()
+    case.insert(0, col_name)
 
     # Opening the population data - see github for source location and how it was edited
 
@@ -34,7 +38,6 @@ def case_rat():
     # Dictionary to contain FIPS ID and the Population estimate
     pop_dict = {}
 
-    population = population.readlines()[1:]
     pop = []
 
     # Making the population CSV into a list, dropping the first line (headers), and removing the \n character
@@ -51,8 +54,11 @@ def case_rat():
 
     # print(pop)
 
-    for i in pop:
-        pop_dict[float(i[0])] = int(i[-1])
+    for i in range(len(pop)):
+        if i == 0:
+            pass
+        else:
+            pop_dict[float(pop[i][0])] = int(pop[i][-1])
 
     # print(pop_dict)
 
@@ -89,18 +95,26 @@ def case_rat():
     case_copy = case.copy()
 
     for i in range(len(case)):
-        fips = case[i][3]
-        if pd.isnull(fips):
-            # This is to prevent errors from missing FIPS values in the source data
-            case[i].append('NULL')
-            case[i].append('NULL')
+        fips = case[i][2]
+        if i == 0:
+            case[i].append("Case/10,000")
+            case[i].append("Death/10,000")
         else:
-            county_pop = pop_dict[fips]
-            ratio = county_pop/10000
-            case_ratio = int(case[i][4]) / ratio
-            death_ratio = int(case[i][5]) / ratio
-            case[i].append(case_ratio)
-            case[i].append(death_ratio)
+            if pd.isnull(fips):
+                # This is to prevent errors from missing FIPS values in the source data
+                case[i].append('NULL')
+                case[i].append('NULL')
+            else:
+                county_pop = pop_dict[fips]
+                ratio = county_pop/10000
+                if ratio == 0:
+                    case_ratio = "NULL"
+                    death_ratio = "NULL"
+                else:
+                    case_ratio = int(case[i][3]) / ratio
+                    death_ratio = int(case[i][4]) / ratio
+                    case[i].append(case_ratio)
+                    case[i].append(death_ratio)
 
     # Writing the edited Case Counts data to a new CSV file
 
