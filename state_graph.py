@@ -15,6 +15,9 @@ states = df["state"]
 
 deaths = df["Death/10,000"]
 
-# print(ggplot(df, aes(x = dates, y = cases, color = states)) + geom_point())
+case_ratio = ggplot(df, aes(x = dates, y = cases, color = states)) + geom_point()
 
-print(ggplot(df, aes(x = dates, y = deaths, color = states)) + geom_point())
+death_ratio = ggplot(df, aes(x = dates, y = deaths, color = states)) + geom_point()
+
+ggsave(case_ratio, "../Data/case_ratio_raw.png")
+ggsave(death_ratio, "../Data/death_ratio_raw.png")
