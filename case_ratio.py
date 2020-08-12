@@ -6,16 +6,13 @@ accurate comparison of cases of COVID-19 across the US
 Garrett Matthews
 
 """
-# Turning this script into a function to allow for easier call from separate scripts
+
+import csv
+import pandas as pd
 
 
 def case_rat():
     """Function to run this whole script"""
-
-    # Importing libraries
-
-    import csv
-    import pandas as pd
 
     # Reading case data by county from NYTimes Github using pandas
 
@@ -60,39 +57,7 @@ def case_rat():
         else:
             pop_dict[float(pop[i][0])] = int(pop[i][-1])
 
-    # print(pop_dict)
-
-    # Following the above steps to make the case counts into a list
-    # This was for an earlier version when I was reading the data from my desktop
-    # Rather than using pandas to take it directly from the github source
-    """
-    case = []
-
-    for line in case_data:
-        case_temp = []
-        for i in line.split(','):
-            case_temp.append(i)
-        case.append(case_temp)
-
-    # print(case)
-    for i in range(len(case)):
-        case[i] = [x.replace('\n', '') for x in case[i]]
-    """
-    # print(case[0:5])
-
-    # Making a dictionary of FIPS : {County : State}
-
-    fips_dict = {}
-
-    for i in pop:
-        county_state = {i[2]: i[1]}
-        fips_dict[i[0]] = county_state
-
-    # print(fips_dict)
-
     # Adding a cases per 10,000 population / county
-
-    case_copy = case.copy()
 
     for i in range(len(case)):
         fips = case[i][2]
@@ -113,19 +78,91 @@ def case_rat():
                 else:
                     case_ratio = int(case[i][3]) / ratio
                     death_ratio = int(case[i][4]) / ratio
-                    case[i].append(case_ratio)
-                    case[i].append(death_ratio)
+                case[i].append(case_ratio)
+                case[i].append(death_ratio)
 
-    # Writing the edited Case Counts data to a new CSV file
+    return case
 
-    file = open('../Data/case_count_ratio.csv', 'w+', newline='')
+
+def regions(case):
+    """Function to add a region to each state"""
+    region = {"Washington": "West", "Oregon": "West", "California": "West", "Nevada": "West", "Idaho": "West",
+              "Montana": "West", "Wyoming": "West", "Utah": "West", "Colorado": "West", "Arizona": "Southwest",
+              "New Mexico": "Southwest", "Texas": "Southwest", "Oklahoma": "Southwest", "Arkansas": "Southeast",
+              "Louisiana": "Southeast", "Mississippi": "Southeast", "Alabama": "Southeast", "Florida": "Southeast",
+              "Georgia": "Southeast", "South Carolina": "Southeast", "North Carolina": "Southeast",
+              "Tennessee": "Southeast", "Kentucky": "Southeast", "West Virginia": "Southeast", "Virginia": "Southeast",
+              "North Dakota": "Midwest", "South Dakota": "Midwest", "Nebraska": "Midwest", "Kansas": "Midwest",
+              "Minnesota": "Midwest", "Iowa": "Midwest", "Missouri": "Midwest", "Wisconsin": "Midwest",
+              "Illinois": "Midwest", "Michigan": "Midwest", "Indiana": "Midwest", "Ohio": "Midwest",
+              "Maryland": "Northeast", "Pennsylvania": "Northeast", "Delaware": "Northeast", "New Jersey": "Northeast",
+              "New York": "Northeast", "Connecticut": "Northeast", "Massachusetts": "Northeast",
+              "Rhode Island": "Northeast", "Vermont": "Northeast", "New Hampshire": "Northeast", "Maine": "Northeast",
+              "Alaska": "Unconnected", "Hawaii": "Unconnected", "Guam": "Unconnected", "Puerto Rico": "Unconnected",
+              "Virgin Islands": "Unconnected", "Northern Mariana Islands": "Unconnected",
+              "District of Columbia": "Northeast"}
+
+    # Adding the regions to the data list
+    for i in range(len(case)):
+        if i == 0:
+            case[i].append("Region")
+        else:
+            case[i].append(region[case[i][1]])
+
+    return case
+
+
+def write_regions(case):
+    """Breaks the list into each region and sends the list to be written to a csv"""
+    west = []
+    southwest = []
+    midwest = []
+    southeast = []
+    unconnected = []
+    northeast = []
+    for i in range(len(case)):
+        if i == 0:
+            west.append(case[i])
+            southwest.append(case[i])
+            southeast.append(case[i])
+            northeast.append(case[i])
+            midwest.append(case[i])
+            unconnected.append(case[i])
+        if case[i][-1] == "West":
+            west.append(case[i])
+        elif case[i][-1] == "Southwest":
+            southwest.append(case[i])
+        elif case[i][-1] == "Midwest":
+            midwest.append(case[i])
+        elif case[i][-1] == "Southeast":
+            southeast.append(case[i])
+        elif case[i][-1] == "Northeast":
+            northeast.append(case[i])
+        elif case[i][-1] == "Unconnected":
+            unconnected.append(case[i])
+
+    write_out(west, '../Data/west_ratio.csv')
+    write_out(southeast, '../Data/southeast_ratio.csv')
+    write_out(southwest, '../Data/southwest_ratio.csv')
+    write_out(northeast, '../Data/northeast_ratio.csv')
+    write_out(unconnected, '../Data/unconnected_ratio.csv')
+    write_out(midwest, '../Data/midwest_ratio.csv')
+
+
+def write_out(case,file_name):
+    """Writes out the list to a CSV file"""
+    print("Writing file now")
+    file = open(file_name, 'w+', newline='')
     with file:
         write = csv.writer(file)
         write.writerows(case)
 
 
 def main():
-    case_rat()
+    lyst = case_rat()
+    case = regions(lyst)
+    write_regions(case)
+    write_out(case, '../Data/case_count_ratio.csv')
 
 
 if __name__ == "__main__":
