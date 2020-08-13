@@ -10,7 +10,7 @@ statesData = pd.read_csv('../Data/states.csv')
 states = statesData['name']
 
 for state in states:
-  # forecastGrowth(state)
+  forecastGrowth(state)
   graphForecast(state)
   graphActual(state)
   stayAtHome(state)
