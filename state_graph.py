@@ -19,8 +19,8 @@ def graph(region, file_name):
     death_ratio = ggplot(df, aes(x = dates, y = deaths, color = states)) + geom_point() +\
         ggtitle("Deaths/10,000 - Region: " + file_name.capitalize())
 
-    case_name = "../Data/" + file_name + "_case.png"
-    death_name = "../Data/" + file_name + "_death.png"
+    case_name = "../Data/Region_Graph/" + file_name + "_case.png"
+    death_name = "../Data/Region_Graph/" + file_name + "_death.png"
 
     ggsave(case_ratio, case_name)
     ggsave(death_ratio, death_name)
@@ -47,11 +47,13 @@ def main():
     cases = reg["Average Case/10,000"]
     deaths = reg["Average Death/10,000"]
 
-    case_average = ggplot(reg, aes(x = date, y= cases, color = regions)) + geom_point()
-    death_average = ggplot(reg, aes(x = date, y = deaths, color = regions)) + geom_point()
+    case_average = ggplot(reg, aes(x = date, y= cases, color = regions)) + geom_point() +\
+        ggtitle("Cases/10,000 - Region Averages")
+    death_average = ggplot(reg, aes(x = date, y = deaths, color = regions)) + geom_point() +\
+        ggtitle("Deaths/10,000 - Region Averages")
 
-    ggsave(case_average, "../Data/case_average.png")
-    ggsave(death_average, "../Data/death_average.png")
+    ggsave(case_average, "../Data/Region_Graph/case_average.png")
+    ggsave(death_average, "../Data/Region_Graph/death_average.png")
 
 
 if __name__ == "__main__":
