@@ -1,7 +1,17 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-data = pd.read_csv('../Data/WHO-COVID-19-us-data.csv')
+from forecast import forecastGrowth
+from forecast_graph import graphForecast
+from stay_at_home import stayAtHome
 
-data.plot()
-plt.show()
+statesData = pd.read_csv('../Data/states.csv')
+states = statesData['name']
+
+for state in states:
+  forecastGrowth(state)
+  graphForecast(state)
+  stayAtHome(state)
+  plt.legend()
+  plt.savefig(f'../Data/Graphs/{state}_graph.png')
+  plt.clf()
