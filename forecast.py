@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 caseData = pd.read_csv("../Data/case_count_ratio.csv")
 mandateData = pd.read_csv('../Data/wikiData.csv')
+states = pd.read_csv('../Data/states.csv')
 
 # Returns date the stay at home order was issued
 def stayAtHomeOrdered(state):
@@ -31,34 +32,33 @@ def lastSevenDays(data, date, num=365):
 def newCasesWeeklyAvg(week):
   return round((week['cases'].values[6] - week['cases'].values[0]) / 7)
 
-# Calculates the growth rate and multiplies it by the number of cases on the day the stay-at-home order was issued
-def calcNewCasesPerDay(week):
-  start = week['cases'].values[5]
-  end = week['cases'].values[6]
-  days = 1
+# Calculates the growth rate for the week
+def calcGrowthRate(week):
+  growthRate = 0
 
-  growthRate = np.log(end/start) / days
-  return growthRate * week['cases'].values[6]
+  for i in range(6):
+    growthRate += week['cases'].values[i + 1] / week['cases'].values[i]
 
-# Predicts the number of total cases if # of new cases per day equals the average of the # of new cases in the last 7 days
+  return growthRate/6
+
 def forecastGrowth(state):
   stateData = caseData[caseData['state'] == state]
   today = pd.to_datetime(datetime.date(datetime.today())).to_numpy()
   date = stayAtHomeOrdered(state)
+  population = states[states['name'] == state]['population'].to_numpy()[0]
+
   if (date):
     week = lastSevenDays(stateData, date, 7)
     totalCases = week['cases'].values[-1]
+    growthRate = calcGrowthRate(week)
 
     forecastedData = lastSevenDays(stateData, date)
 
     while (date != today):
-      week = lastSevenDays(forecastedData, date, 7)
-      # newCases = newCasesWeeklyAvg(week)
-      newCases = round(calcNewCasesPerDay(week))
-      totalCases += newCases
+      totalCases *= growthRate * (population - totalCases) / population
 
+      date += np.timedelta64(1, 'D')
       row = pd.DataFrame([[date, totalCases]], columns = week.columns)
       forecastedData = forecastedData.append(row)
-      date += np.timedelta64(1, 'D')
-
+      
     forecastedData.to_csv(f'../Data/Forecasts/{state}_forecast.csv')
