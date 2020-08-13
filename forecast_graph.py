@@ -15,5 +15,3 @@ def graphForecast(state):
 
     plt.title(f'{state} Forecasted Cases')
     plt.plot_date(x, y, label='Predicted cases')
-
-graphForecast('Arkansas')
