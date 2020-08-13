@@ -98,7 +98,7 @@ def main():
             for k in copy[i][j]:
                 lyst.append([i, j, k[0], k[1]])
     # Writing the data out as a csv
-    with open("../Data/region_average.csv", "w+", newline= '') as file:
+    with open("../Data/Region_Data/region_average.csv", "w+", newline= '') as file:
         write = csv.writer(file)
         write.writerows(lyst)
 

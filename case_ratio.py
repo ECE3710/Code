@@ -141,12 +141,12 @@ def write_regions(case):
         elif case[i][-1] == "Unconnected":
             unconnected.append(case[i])
 
-    write_out(west, '../Data/west_ratio.csv')
-    write_out(southeast, '../Data/southeast_ratio.csv')
-    write_out(southwest, '../Data/southwest_ratio.csv')
-    write_out(northeast, '../Data/northeast_ratio.csv')
-    write_out(unconnected, '../Data/unconnected_ratio.csv')
-    write_out(midwest, '../Data/midwest_ratio.csv')
+    write_out(west, '../Data/Region_Data/west_ratio.csv')
+    write_out(southeast, '../Data/Region_Data/southeast_ratio.csv')
+    write_out(southwest, '../Data/Region_Data/southwest_ratio.csv')
+    write_out(northeast, '../Data/Region_Data/northeast_ratio.csv')
+    write_out(unconnected, '../Data/Region_Data/unconnected_ratio.csv')
+    write_out(midwest, '../Data/Region_Data/midwest_ratio.csv')
 
 
 def write_out(case,file_name):

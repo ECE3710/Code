@@ -27,12 +27,12 @@ def graph(region, file_name):
 
 
 def main():
-    west = pd.read_csv("../Data/west_ratio.csv")
-    southwest = pd.read_csv("../Data/southwest_ratio.csv")
-    southeast = pd.read_csv("../Data/southeast_ratio.csv")
-    midwest = pd.read_csv("../Data/midwest_ratio.csv")
-    northeast = pd.read_csv("../Data/northeast_ratio.csv")
-    unconnected = pd.read_csv("../Data/unconnected_ratio.csv")
+    west = pd.read_csv("../Data/Region_Data/west_ratio.csv")
+    southwest = pd.read_csv("../Data/Region_Data/southwest_ratio.csv")
+    southeast = pd.read_csv("../Data/Region_Data/southeast_ratio.csv")
+    midwest = pd.read_csv("../Data/Region_Data/midwest_ratio.csv")
+    northeast = pd.read_csv("../Data/Region_Data/northeast_ratio.csv")
+    unconnected = pd.read_csv("../Data/Region_Data/unconnected_ratio.csv")
 
     graph(west, "west")
     graph(southeast, "southeast")
@@ -41,7 +41,7 @@ def main():
     graph(northeast, "northeast")
     graph(unconnected, "unconnected")
 
-    reg = pd.read_csv("../Data/region_average.csv")
+    reg = pd.read_csv("../Data/Region_Data/region_average.csv")
     date = pd.to_datetime(reg["Date"]).to_numpy()
     regions = reg["Region"]
     cases = reg["Average Case/10,000"]
