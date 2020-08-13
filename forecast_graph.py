@@ -14,4 +14,4 @@ def graphForecast(state):
     y = cases
 
     plt.title(f'{state} Forecasted Cases')
-    plt.plot_date(x, y, label='Predicted cases')
+    plt.plot_date(x, y, color='orange', label='Predicted cases')
