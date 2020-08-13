@@ -62,5 +62,3 @@ def forecastGrowth(state):
       date += np.timedelta64(1, 'D')
 
     forecastedData.to_csv(f'../Data/Forecasts/{state}_forecast.csv')
-
-forecastGrowth('Arkansas')
