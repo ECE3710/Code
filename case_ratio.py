@@ -151,7 +151,6 @@ def write_regions(case):
 
 def write_out(case,file_name):
     """Writes out the list to a CSV file"""
-    print("Writing file now")
     file = open(file_name, 'w+', newline='')
     with file:
         write = csv.writer(file)
